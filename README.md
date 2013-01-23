@@ -1,6 +1,6 @@
 # TransmissionApi
 
-Very simple Ruby Gem to comunicate with the Transmission API.
+More complex version from the * [Very simple Ruby Gem](https://github.com/dsander/transmission-client) to comunicate with the Transmission API.
 
 There are other alternatives, this one just works better for me but I recommend you to check out the others.:
 
@@ -24,17 +24,15 @@ Or install it yourself as:
 
 ## Usage
 
-    transmission_api =
-      TransmissionApi.new(
+      TransmissionApi.configure(
         :username => "username",
         :password => "password",
         :url      => "http://127.0.0.1:9091/transmission/rpc"
-      )
 
-    torrents = transmission_api.all
-    torrent = transmission_api.find(id)
-    torrent = transmission_api.create("http://torrent.com/nice_pic.torrent")
-    transmission_api.destroy(id)
+    torrents = TransmissionApi::Torrent.all
+    torrent = TransmissionApi::Torrent.find(id)
+    torrent = TransmissionApi::Torrent.create("http://torrent.com/nice_pic.torrent")
+    TransmissionApi::Torrent.destroy(id)
 
 ## State
 

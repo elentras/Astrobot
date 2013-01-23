@@ -1,13 +1,13 @@
-require_relative "transmission_api/version"
-require "httparty"
-require "json"
+require "transmission_api/version"
+require 'yaml'
 
-class TransmissionApi
-  attr_accessor :session_id
-  attr_accessor :url
-  attr_accessor :basic_auth
-  attr_accessor :fields
-  attr_accessor :debug_mode
+module TransmissionApi
+  # Loading classes to easier access
+  # NOTE: I like this way to handle my classes,
+  #   sexiest than using require 'my_class_file' everywhere
+  autoload :Torrent, 'transmission_api/torrent'
+  autoload :Client, 'transmission_api/client'
+  autoload :Logger, 'transmission_api/logger'
 
   TORRENT_FIELDS = [
     "id",
@@ -21,125 +21,41 @@ class TransmissionApi
     "files"
   ]
 
-  def initialize(opts)
-    @url = opts[:url]
-    @fields = opts[:fields] || TORRENT_FIELDS
-    @basic_auth = { :username => opts[:username], :password => opts[:password] } if opts[:username]
-    @session_id = "NOT-INITIALIZED"
-    @debug_mode = opts[:debug_mode] || false
+  # Configuration defaults
+  @@config = {
+    url: 'http://127.0.0.1:9091/transmission/rpc',
+    fields: TORRENT_FIELDS,
+    basic_auth: { :username => '', :password => '' },
+    session_id: "NOT-INITIALIZED",
+    debug_mode: false
+  }
+
+  YAML_INITIALIZER_PATH = File.dirname(__FILE__)
+  @valid_config_keys = @@config.keys
+
+  # Configure through hash
+  def self.configure(opts = {})
+    opts.each {|k,v| @@config[k.to_sym] = v if @valid_config_keys.include? k.to_sym}
   end
 
-  def all
-    log "get_torrents"
-
-    response =
-      post(
-        :method => "torrent-get",
-        :arguments => {
-          :fields => fields
-        }
-      )
-
-    response["arguments"]["torrents"]
-  end
-
-  def find(id)
-    log "get_torrent: #{id}"
-
-    response =
-      post(
-        :method => "torrent-get",
-        :arguments => {
-          :fields => fields,
-          :ids => [id]
-        }
-      )
-
-    response["arguments"]["torrents"].first
-  end
-
-  def create(filename)
-    log "add_torrent: #{filename}"
-
-    response =
-      post(
-        :method => "torrent-add",
-        :arguments => {
-          :filename => filename
-        }
-      )
-
-    response["arguments"]["torrent-added"]
-  end
-
-  def destroy(id)
-    log "remove_torrent: #{id}"
-
-    response =
-      post(
-        :method => "torrent-remove",
-        :arguments => {
-          :ids => [id],
-          :"delete-local-data" => true
-        }
-      )
-
-    response
-  end
-
-  def post(opts)
-    JSON::parse( http_post(opts).body )
-  end
-
-  def http_post(opts)
-    post_options = {
-      :body => opts.to_json,
-      :headers => { "x-transmission-session-id" => session_id }
-    }
-    post_options.merge!( :basic_auth => basic_auth ) if basic_auth
-
-    log "url: #{url}"
-    log "post_body:"
-    log JSON.parse(post_options[:body]).to_yaml
-    log "------------------"
-
-    response = HTTParty.post( url, post_options )
-
-    log_response response
-
-    # retry connection if session_id incorrect
-    if( response.code == 409 )
-      log "changing session_id"
-      @session_id = response.headers["x-transmission-session-id"]
-      response = http_post(opts)
-    end
-
-    response
-  end
-
-  def log(message)
-    Kernel.puts "[TransmissionApi #{Time.now.strftime( "%F %T" )}] #{message}" if debug_mode
-  end
-
-  def log_response(response)
-    body = nil
+  # Configure through yaml file
+  # for ruby scripting usage
+  def self.configure_with(yaml_file_path = nil)
+    yaml_file_path = YAML_INITIALIZER_PATH  unless yaml_file_path
     begin
-      body = JSON.parse(response.body).to_yaml
-    rescue
-      body = response.body
+      config = YAML::load(IO.read(path_to_yaml_file))
+    rescue Errno::ENOENT
+      Logger.add(:warning, "YAML configuration file couldn't be found. Using defaults."); return
+    rescue Psych::SyntaxError
+      Logger.add(:warning, "YAML configuration file contains invalid syntax. Using defaults."); return
     end
 
-    headers = response.headers.to_yaml
+    configure(config)
+  end
 
-    log "response.code: #{response.code}"
-    log "response.message: #{response.message}"
-
-    log "response.body:"
-    log body
-    log "-----------------"
-
-    log "response.headers:"
-    log headers
-    log "------------------"
+  # Access to config variables
+  def self.config
+    @@config = configure unless @@config
+    @@config
   end
 end

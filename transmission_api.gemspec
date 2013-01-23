@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "transmission_api"
   gem.require_paths = ["lib"]
-  gem.version       = TransmissionApi::VERSION
+  gem.version       = TransmissionApi::Version::VERSION
 
   gem.add_dependency "httparty", "0.9.0"
 
