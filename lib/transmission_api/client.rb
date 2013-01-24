@@ -16,18 +16,18 @@ module TransmissionApi
       post_options.merge!( :basic_auth => TransmissionApi.config[:basic_auth]) unless 
         TransmissionApi.config[:basic_auth].nil?
 
-      Logger.add "url: #{TransmissionApi.config[:url]}"
-      Logger.add "post_body:"
-      Logger.add JSON.parse(post_options[:body]).to_yaml
-      Logger.add "------------------"
+      TransmissionApi::Logger.add "url: #{TransmissionApi.config[:url]}"
+      TransmissionApi::Logger.add "post_body:"
+      TransmissionApi::Logger.add JSON.parse(post_options[:body]).to_yaml
+      TransmissionApi::Logger.add "------------------"
 
       response = HTTParty.post(TransmissionApi.config[:url], post_options)
 
-      Logger.debug response
+      TransmissionApi::Logger.debug response
 
       # retry connection 3 times if session_id incorrect
       if( response.code == 409 and try_counter <= 3)
-        Logger.add "changing session_id"
+        TransmissionApi::Logger.add "changing session_id"
         TransmissionApi.configure(:session_id => response.headers["x-transmission-session-id"])
         try_counter.next
         response = http_post(opts, try_counter)
