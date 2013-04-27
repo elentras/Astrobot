@@ -6,6 +6,7 @@ module TransmissionApi
   # NOTE: I like this way to handle my classes,
   #   sexiest than using require 'my_class_file' everywhere
   autoload :Torrent, 'transmission_api/torrent'
+  autoload :Controls, 'transmission_api/controls'
   autoload :Client, 'transmission_api/client'
   autoload :Logger, 'transmission_api/logger'
 

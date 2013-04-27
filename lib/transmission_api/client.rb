@@ -4,6 +4,13 @@ require "json"
 module TransmissionApi
   class Client
 
+    def self.build(method, opts = {})
+      TransmissionApi::Client.post(
+        :method => method,
+        :arguments => opts
+      )
+    end
+
     def self.post(opts)
       JSON::parse( http_post(opts).body )
     end
