@@ -21,7 +21,7 @@ module Astrobot
         :headers => { "x-transmission-session-id" => Astrobot.config[:session_id] }
       }
       post_options.merge!( :basic_auth => Astrobot.config[:basic_auth]) unless 
-        TransmissionApi.config[:basic_auth].nil?
+        Astrobot.config[:basic_auth].nil?
 
       Astrobot::Logger.add "url: #{Astrobot.config[:url]}"
       Astrobot::Logger.add "post_body:"
