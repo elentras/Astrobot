@@ -13,6 +13,7 @@ module TransmissionApi
   TORRENT_FIELDS = [
     "id",
     "name",
+    'status',
     "totalSize",
     "addedDate",
     "isFinished",
