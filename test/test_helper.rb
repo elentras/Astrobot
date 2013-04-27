@@ -1,6 +1,6 @@
 require "test/unit"
 require "mocha"
-require_relative "../lib/transmission_api"
+require_relative "../lib/astrobot"
 
 class Test::Unit::TestCase
   FIXTURES = File.expand_path( "#{File.dirname(__FILE__)}/fixtures" )

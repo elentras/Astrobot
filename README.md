@@ -1,4 +1,4 @@
-# TransmissionApi
+# Astrobot
 
 More complex version from the * [Very simple Ruby Gem](https://github.com/dsander/transmission-client) to comunicate with the Transmission API.
 
@@ -12,7 +12,7 @@ There are other alternatives, this one just works better for me but I recommend 
 
 Add this line to your application"s Gemfile:
 
-    gem "transmission_api"
+    gem "astrobot"
 
 And then execute:
 
@@ -20,23 +20,23 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install transmission_api
+    $ gem install astrobot
 
 ## Usage
 
-      TransmissionApi.configure(
+      Astrobot.configure(
         :username => "username",
         :password => "password",
         :url      => "http://127.0.0.1:9091/transmission/rpc"
 
-    torrents = TransmissionApi::Torrent.all
-    torrent = TransmissionApi::Torrent.find(id)
-    torrent = TransmissionApi::Torrent.create("http://torrent.com/nice_pic.torrent")
-    TransmissionApi::Torrent.destroy(id)
+    torrents = Astrobot::Torrent.all
+    torrent = Astrobot::Torrent.find(id)
+    torrent = Astrobot::Torrent.create("http://torrent.com/nice_pic.torrent")
+    Astrobot::Torrent.destroy(id)
 
 ## State
 
-Version experimental, not use in production.
+Version experimental, currently tesing in production. <:D
 
 ## Transmission Api Doc
 
