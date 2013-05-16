@@ -20,7 +20,8 @@ module Astrobot
     "rateDownload",
     "rateUpload",
     "percentDone",
-    "files"
+    "files",
+    "hashString"
   ]
   
   TORRENT_ALL_FIELDS = [
