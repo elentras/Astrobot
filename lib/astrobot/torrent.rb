@@ -23,7 +23,7 @@ module Astrobot
       raise StandardError, "missing :filename in params" unless filename
       Logger.add "add_torrent: #{filename}"
       opts = {:filename => filename}
-      opts.merge!('download-dir': download_dir ) if download_dir
+      opts.merge!({'download-dir' => download_dir }) if download_dir
 
       response = Astrobot::Client.build("torrent-add", opts)
       response["arguments"]["torrent-added"]
