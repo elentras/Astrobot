@@ -19,10 +19,11 @@ module Astrobot
       convert_hash_keys(response["arguments"]["torrents"]).first
     end
 
-    def self.create(filename)
+    def self.create(filename, download_dir = nil)
       raise StandardError, "missing :filename in params" unless filename
       Logger.add "add_torrent: #{filename}"
       opts = {:filename => filename}
+      opts.merge!('download-dir': download_dir ) if download_dir
 
       response = Astrobot::Client.build("torrent-add", opts)
       response["arguments"]["torrent-added"]
